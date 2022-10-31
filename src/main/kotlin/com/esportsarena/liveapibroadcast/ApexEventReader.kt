@@ -1,3 +1,5 @@
+package com.esportsarena.liveapibroadcast
+
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -14,6 +16,10 @@ object ApexEventReader {
 
         fun ingestEvents(live: Boolean) {
             while (true) {
+                if (!isSocketConnected) {
+                    Thread.sleep(1000)
+                    continue
+                }
                 var line = reader.readLine() ?: break
                 //if (!live) continue
                 if (line.endsWith(",")) line = line.substring(0, line.length - 1)
@@ -25,14 +31,14 @@ object ApexEventReader {
                     //println(json.toString())
                     sendEventToServer(json.toString())
                     //broadcastEvent(json.toString())
-                    Thread.sleep(5000)
+                    //Thread.sleep(5000)
                 } catch (_: JSONException) {
                 }
             }
         }
     }
 
-    val liveapiFolder = File("C:\\Users\\Fzzy\\Saved Games\\Respawn\\Apex\\assets\\temp\\live_api")
+    val liveapiFolder = File("C:\\Users\\admin\\Saved Games\\Respawn\\Apex\\assets\\temp\\live_api")
 
     val matches = arrayListOf<ApexMatch>()
 

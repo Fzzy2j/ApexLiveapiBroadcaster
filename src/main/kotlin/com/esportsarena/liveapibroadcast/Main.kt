@@ -1,9 +1,16 @@
+package com.esportsarena.liveapibroadcast
+
 import java.io.DataOutputStream
 import java.net.*
 
 var socketOut: DataOutputStream? = null
 
+val isSocketConnected: Boolean
+    get() { return socketOut != null }
+
 fun main(args: Array<String>) {
+    val gui = GUI()
+
     awaitSocketAddress()
 
     ApexEventReader.start()
@@ -38,6 +45,7 @@ fun awaitSocketAddress() {
             socketOut = DataOutputStream(eventSocket.getOutputStream())
 
             println(">>> Address Found: ${packet.address}")
+            socket.close()
             break
         }
     }

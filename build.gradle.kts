@@ -14,7 +14,8 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("org.json:json:20220320")
+    implementation("org.json:json:20220924")
+    implementation("com.google.code.gson:gson:2.10")
 }
 
 tasks.test {
