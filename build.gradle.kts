@@ -1,15 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     kotlin("jvm") version "1.7.20"
     application
 }
 
-group = "org.example"
+group = "com.esportsarena.liveapibroadcast"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+tasks {
+    withType<Jar> {
+        manifest {
+            attributes["Main-Class"] = "com.esportsarena.liveapibroadcast.MainKt"
+        }
+    }
 }
 
 dependencies {

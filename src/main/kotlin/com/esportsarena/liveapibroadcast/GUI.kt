@@ -3,9 +3,7 @@ package com.esportsarena.liveapibroadcast
 import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
-import java.awt.Dimension
-import java.awt.FlowLayout
-import java.awt.GridLayout
+import java.awt.*
 import java.io.File
 import java.io.FileWriter
 import javax.swing.*
@@ -18,6 +16,20 @@ class GUI {
     private val configFile: LinkedTreeMap<String, String>
     private val textFields = hashMapOf<String, JTextField>()
     private val checkBoxes = hashMapOf<String, JCheckBox>()
+    private var lines = 0
+    private val frame = JFrame("Liveapi Broadcaster")
+
+    private val statusLabel = JLabel("")
+
+    var isConnected: Boolean = false
+        set(value) {
+            if (value) {
+                statusLabel.text = "CONNECTED"
+            } else {
+                statusLabel.text = "NOT CONNECTED"
+            }
+            field = value
+        }
 
     val currentSpec: String
         get() = textFields["Apex Account Name"]!!.text
@@ -34,26 +46,30 @@ class GUI {
         else
             gson.fromJson(text, object : TypeToken<Map<String, String>>() {}.type)
 
-        val frame = JFrame("Liveapi Broadcaster")
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        frame.preferredSize = Dimension(600, 200)
+        frame.preferredSize = Dimension(580, 140)
+        frame.isResizable = false
 
-        frame.add(initTextField("Apex Account Name"))
-        frame.add(initTextField("Liveapi Directory"))
+        //initTextField("Apex Account Name")
+        initTextField("Liveapi Directory")
 
-        frame.layout = GridLayout(14, 2)
+        statusLabel.font = Font(statusLabel.font.name, Font.PLAIN, 26)
+        statusLabel.bounds = Rectangle(5, 5 + (lines++ * 25), 400, 45)
+        frame.add(statusLabel)
+
+        frame.layout = null
 
         frame.setLocationRelativeTo(null)
         frame.pack()
         frame.isVisible = true
     }
 
-    private fun initTextField(key: String): JPanel {
-        val panel = JPanel()
-        panel.layout = FlowLayout(FlowLayout.LEFT)
-        panel.add(JLabel("$key: "))
+    private fun initTextField(key: String) {
+        val label = JLabel("$key: ")
+        label.bounds = Rectangle(5, 5 + (lines * 25), 150, 25)
+        frame.add(label)
         textFields[key] = JTextField(configFile.getOrDefault(key, ""))
-        textFields[key]!!.preferredSize = Dimension(300, 50)
+        textFields[key]!!.bounds = Rectangle(155, 5 + (lines++ * 25), 400, 25)
 
         textFields[key]!!.document.addDocumentListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent) {
@@ -68,8 +84,7 @@ class GUI {
             }
         })
 
-        panel.add(textFields[key])
-        return panel
+        frame.add(textFields[key])
     }
 
     private fun initCheckBox(key: String): JPanel {
